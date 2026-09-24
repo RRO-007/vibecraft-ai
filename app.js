@@ -1,11 +1,12 @@
 console.log("VibeCraft AI is awake! ⚡");
 
 // 1. Grab all the elements we need from the HTML
-const generateBtn = document.getElementById("generateBtn"); // The Test Me button
+const generateBtn = document.getElementById("generateBtn");
 const outputCard = document.getElementById("outputCard");
 const finalPrompt = document.getElementById("finalPrompt");
 const copyBtn = document.getElementById("copyBtn");
 const regenBtn = document.getElementById("regenerateBtn");
+const modelSelector = document.getElementById("modelSelector");
 
 // 2. Find all the app type cards
 const appTypeCards = document.querySelectorAll('input[name="appType"]');
@@ -24,31 +25,31 @@ appTypeCards.forEach(card => {
             modelName.textContent = "Claude 3.7 Sonnet";
             modelReason.textContent = "Best for high-logic premium coding.";
             priceTier.textContent = "Premium Tier";
-            priceTier.style.background = "#E67E22"; // Orange for premium
-            ratingText.textContent = "★★★★★ (5/5 Capability)"; // 5 stars for Claude
+            priceTier.style.background = "#E67E22";
+            ratingText.textContent = "★★★★★ (5/5 Capability)";
             timeText.textContent = "4 - 6 hours";
             hackText.textContent = "Use Cursor's AI chat to explain concepts before writing code.";
         } else if (card.value === "cli") {
             modelName.textContent = "DeepSeek-V3 / R1";
             modelReason.textContent = "Best for fast command-line scripts.";
             priceTier.textContent = "Free Tier";
-            priceTier.style.background = "var(--accent)"; // Back to teal
-            ratingText.textContent = "★★★★☆ (4.5/5 Capability)"; // 4.5 stars
+            priceTier.style.background = "var(--accent)";
+            ratingText.textContent = "★★★★☆ (4.5/5 Capability)";
             timeText.textContent = "1 - 2 hours";
             hackText.textContent = "Build a tiny version first, then add one feature at a time.";
         } else {
             modelName.textContent = "DeepSeek-V3 / R1";
             modelReason.textContent = "Best for free power and learning.";
             priceTier.textContent = "Free Tier";
-            priceTier.style.background = "var(--accent)"; // Back to teal
-            ratingText.textContent = "★★★★☆ (4.5/5 Capability)"; // 4.5 stars
+            priceTier.style.background = "var(--accent)";
+            ratingText.textContent = "★★★★☆ (4.5/5 Capability)";
             timeText.textContent = "2 - 4 hours";
             hackText.textContent = "Use the Pomodoro Technique (25 mins work, 5 mins break).";
         }
     });
 });
 
-// 4. The Core Prompt Generator (Patient Version)
+// 4. The Core Prompt Generator (Multi-Provider Version)
 const API_URL = "https://vibecraft-ai.opurbobd2019.workers.dev/";
 
 generateBtn.addEventListener("click", async () => {
@@ -62,6 +63,7 @@ generateBtn.addEventListener("click", async () => {
         return;
     }
 
+    const selectedProvider = modelSelector.value;
     generateBtn.textContent = "🧠 AI is thinking... (may take 60s)";
     generateBtn.disabled = true;
 
@@ -75,7 +77,11 @@ generateBtn.addEventListener("click", async () => {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: userContext, mode: "prompt" })
+            body: JSON.stringify({ 
+                prompt: userContext, 
+                mode: "prompt",
+                provider: selectedProvider
+            })
         });
         
         const data = await response.json();
@@ -84,9 +90,16 @@ generateBtn.addEventListener("click", async () => {
         finalPrompt.value = data.result;
         outputCard.style.display = "block";
         saveToHistory(data.result);
+
+        // Show which provider actually answered
+        if (data.provider && data.provider !== selectedProvider) {
+            toast.textContent = `⚠️ ${selectedProvider} was busy — used ${data.provider} instead.`;
+            toast.style.display = "block";
+            setTimeout(() => { toast.style.display = "none"; }, 4000);
+        }
         
     } catch (error) {
-        toast.textContent = "AI connection failed. Try again in a moment.";
+        toast.textContent = "All AI providers failed. Please try again in a minute.";
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 4000);
         console.error("AI Error:", error);
@@ -100,19 +113,19 @@ generateBtn.addEventListener("click", async () => {
 copyBtn.addEventListener("click", () => {
     navigator.clipboard.writeText(finalPrompt.value).then(() => {
         copyBtn.textContent = "🎉 Copied!";
-        copyBtn.classList.add("pulse"); // Add the gold pulse animation
+        copyBtn.classList.add("pulse");
         setTimeout(() => {
             copyBtn.textContent = "📋 Copy Prompt";
-            copyBtn.classList.remove("pulse"); // Remove it so it can pulse again next time
-        }, 2000); // Changes back after 2 seconds
+            copyBtn.classList.remove("pulse");
+        }, 2000);
     });
 });
 
-// 6. Regenerate button (just hides the box so they can try again)
+// 6. Regenerate button
 regenBtn.addEventListener("click", () => {
     outputCard.style.display = "none";
-    document.getElementById("ideaBox").value = ""; // Clears the text area
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scrolls back to top
+    document.getElementById("ideaBox").value = "";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 // 7. Daily Internet Sync Simulation
@@ -120,7 +133,6 @@ const syncBtn = document.getElementById("syncButton");
 const lastUpdatedSpan = document.getElementById("lastUpdated");
 const syncStatusSpan = document.getElementById("syncStatus");
 
-// Check the toy chest (localStorage) when the page loads
 function loadLastSync() {
     const savedDate = localStorage.getItem("vibeCraftLastSync");
     if (savedDate) {
@@ -128,55 +140,58 @@ function loadLastSync() {
     }
 }
 
-// When the user clicks "Sync Now"
 syncBtn.addEventListener("click", () => {
     syncStatusSpan.textContent = "Syncing...";
-    syncStatusSpan.style.color = "#E67E22"; // Orange
-    
-    // Pretend it takes 1 second to reach the internet
+    syncStatusSpan.style.color = "#E67E22";
     setTimeout(() => {
         const now = new Date();
         const timeString = now.toLocaleDateString() + " at " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
         lastUpdatedSpan.textContent = timeString;
         syncStatusSpan.textContent = "Online ✅";
-        syncStatusSpan.style.color = "#20B2AA"; // Back to teal
-        
-        // Save to the toy chest
+        syncStatusSpan.style.color = "#20B2AA";
         localStorage.setItem("vibeCraftLastSync", timeString);
     }, 1000);
 });
 
-// Run the load function when the app starts
 loadLastSync();
 
-// 8. Surprise Me Button (Patient Version)
+// 8. Surprise Me Button (Multi-Provider Version)
+const surpriseBtn = document.getElementById("surpriseBtn");
+const ideaBox = document.getElementById("ideaBox");
+
 surpriseBtn.addEventListener("click", async () => {
     surpriseBtn.textContent = "🧠 Thinking...";
     surpriseBtn.disabled = true;
     ideaBox.value = "";
 
-    // Show a hint that this can take a while
     const toast = document.getElementById("toastMessage");
-    toast.textContent = "⏳ Asking the AI... this can take 30-60 seconds on free tier.";
+    toast.textContent = "⏳ Asking the AI... this can take 30-60 seconds.";
     toast.style.display = "block";
-    toast.style.background = "#FFB300"; // amber
+    toast.style.background = "#FFB300";
+
+    const selectedProvider = modelSelector.value;
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: "give me one app idea", mode: "idea" })
+            body: JSON.stringify({ 
+                prompt: "give me one app idea", 
+                mode: "idea",
+                provider: selectedProvider
+            })
         });
         const data = await response.json();
         if (data.result) {
             ideaBox.value = data.result.trim();
             toast.textContent = "✅ Idea ready!";
             toast.style.background = "#20B2AA";
+        } else if (data.error) {
+            throw new Error(data.error);
         }
     } catch (error) {
         console.error("Surprise error:", error);
-        toast.textContent = "❌ AI failed. Try again in a moment.";
+        toast.textContent = "❌ All providers failed. Try again in a minute.";
         toast.style.background = "#FF6B6B";
     } finally {
         setTimeout(() => { toast.style.display = "none"; toast.style.background = ""; }, 3000);
@@ -185,7 +200,7 @@ surpriseBtn.addEventListener("click", async () => {
     }
 });
 
-// 9. Dark Mode Toggle (The Spaceship Button)
+// 9. Dark Mode Toggle
 const darkToggle = document.getElementById("darkModeToggle");
 
 if (localStorage.getItem("vibeCraftTheme") === "dark") {
@@ -208,44 +223,30 @@ darkToggle.addEventListener("click", () => {
 const downloadBtn = document.getElementById("downloadBtn");
 
 downloadBtn.addEventListener("click", () => {
-    // 1. Create a "Blob" (a virtual file) from the prompt text
     const blob = new Blob([finalPrompt.value], { type: "text/plain" });
-    
-    // 2. Create a temporary invisible link to the file
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "VibeCraft-Prompt.txt"; // The name of the downloaded file
-    
-    // 3. Click the link automatically, then clean up
+    a.download = "VibeCraft-Prompt.txt";
     a.click();
     URL.revokeObjectURL(url);
 });
 
-// 11. Prompt History (The Photo Album)
+// 11. Prompt History
 const historyBtn = document.getElementById("historyBtn");
 const historyCard = document.getElementById("historyCard");
 const historyList = document.getElementById("historyList");
 
-// Function to save a prompt to the history
 function saveToHistory(promptText) {
-    // 1. Get the existing history from the toy chest
     let history = JSON.parse(localStorage.getItem("vibeCraftHistory") || "[]");
-    
-    // 2. Add the new prompt to the front of the array
     history.unshift(promptText);
-    
-    // 3. Keep only the last 5 prompts (so we don't fill up the toy chest)
     history = history.slice(0, 5);
-    
-    // 4. Save it back
     localStorage.setItem("vibeCraftHistory", JSON.stringify(history));
 }
 
-// Function to display the history
 function renderHistory() {
     let history = JSON.parse(localStorage.getItem("vibeCraftHistory") || "[]");
-    historyList.innerHTML = ""; // Clear out old list items
+    historyList.innerHTML = "";
     
     if (history.length === 0) {
         historyList.innerHTML = "<p style='color:#888; font-size:0.9rem;'>No prompts yet! Generate one to start your album.</p>";
@@ -255,9 +256,7 @@ function renderHistory() {
     history.forEach(promptText => {
         const div = document.createElement("div");
         div.className = "history-item";
-        // Show a preview of the prompt (first 80 characters)
         div.textContent = promptText.substring(0, 80) + "...";
-        // If they click it, load it back into the main output box
         div.addEventListener("click", () => {
             finalPrompt.value = promptText;
             outputCard.style.display = "block";
@@ -267,7 +266,6 @@ function renderHistory() {
     });
 }
 
-// Show/Hide the history card when the button is clicked
 historyBtn.addEventListener("click", () => {
     if (historyCard.style.display === "none") {
         renderHistory();
@@ -283,27 +281,23 @@ historyBtn.addEventListener("click", () => {
 const welcomeModal = document.getElementById("welcomeModal");
 const closeModalBtn = document.getElementById("closeModalBtn");
 
-// Check if the user has seen the welcome message before
 if (localStorage.getItem("vibeCraftWelcomed") === "yes") {
-    welcomeModal.style.display = "none"; // Hide it if they have
+    welcomeModal.style.display = "none";
 }
 
 closeModalBtn.addEventListener("click", () => {
     welcomeModal.style.display = "none";
-    localStorage.setItem("vibeCraftWelcomed", "yes"); // Remember for next time
+    localStorage.setItem("vibeCraftWelcomed", "yes");
 });
 
-// 13. Complexity Slider Label (Updated with Debugging)
+// 13. Complexity Slider Label
 const complexitySlider = document.getElementById("complexitySlider");
 const complexityLabel = document.getElementById("complexityLabel");
 
-// We listen for BOTH 'input' (while dragging) and 'change' (when released) to be safe
 complexitySlider.addEventListener("input", updateComplexityLabel);
 complexitySlider.addEventListener("change", updateComplexityLabel);
 
 function updateComplexityLabel() {
     const labels = { "1": "Simple", "2": "Medium", "3": "Large" };
     complexityLabel.textContent = labels[complexitySlider.value];
-    console.log("Slider moved! New value:", complexitySlider.value, "-> Label:", labels[complexitySlider.value]);
 }
-

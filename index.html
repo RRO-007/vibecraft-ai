@@ -40,6 +40,16 @@
 
         <div class="complexity-section">
             <label for="complexitySlider">Project Complexity: <span id="complexityLabel">Medium</span></label>
+            <div class="model-selector-section">
+                <label for="modelSelector">🧠 AI Engine for Prompt Generation:</label>
+                <select id="modelSelector">
+                    <option value="gemini">Google Gemini (Recommended)</option>
+                    <option value="groq">Groq (Fastest)</option>
+                    <option value="openrouter">OpenRouter (Most Models)</option>
+                    <option value="mistral">Mistral (Best for Code)</option>
+                    <option value="cerebras">Cerebras (Ultra Fast)</option>
+                </select>
+            </div>
             <input type="range" id="complexitySlider" min="1" max="3" value="2" step="1">
         </div>
     </div>

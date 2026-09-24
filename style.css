@@ -667,3 +667,31 @@ input[type="range"] {
     accent-color: #8A2BE2; /* Makes the slider purple */
 }
 
+/* 24. Model Selector */
+.model-selector-section {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.model-selector-section label {
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+body.dark-mode .model-selector-section label { color: #8B949E; }
+#modelSelector {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+}
+#modelSelector:focus {
+    outline: none;
+    border-color: #8A2BE2;
+}
