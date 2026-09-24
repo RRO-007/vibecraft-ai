@@ -135,7 +135,6 @@ loadLastSync();
 const surpriseBtn = document.getElementById("surpriseBtn");
 const ideaBox = document.getElementById("ideaBox");
 
-// This is our "grab bag" of ideas
 const appIdeas = [
     "A habit tracker that helps me build a daily reading routine.",
     "A flashcard quiz app for studying for my history exams.",
@@ -146,18 +145,8 @@ const appIdeas = [
     "A study planner that helps me track my homework and tests."
 ];
 
-// When the user clicks the pink button...
 surpriseBtn.addEventListener("click", () => {
-
-    console.log("Surprise button was clicked!");
-    
-    // 1. Roll a virtual dice to pick a random number
     const randomIndex = Math.floor(Math.random() * appIdeas.length);
-    
-    // 2. Grab the idea at that random number
     const randomIdea = appIdeas[randomIndex];
-    
-    // 3. Type it into the big text box
     ideaBox.value = randomIdea;
 });
-
