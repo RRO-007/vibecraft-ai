@@ -131,3 +131,30 @@ syncBtn.addEventListener("click", () => {
 // Run the load function when the app starts
 loadLastSync();
 
+// 8. The Surprise Me Button Logic
+const surpriseBtn = document.getElementById("surpriseBtn");
+const ideaBox = document.getElementById("ideaBox");
+
+// This is our "grab bag" of ideas
+const appIdeas = [
+    "A habit tracker that helps me build a daily reading routine.",
+    "A flashcard quiz app for studying for my history exams.",
+    "A simple recipe finder that suggests meals based on what's in my fridge.",
+    "A daily journal that asks me one thoughtful question every morning.",
+    "A budget tracker that visualizes my spending with colorful charts.",
+    "A to-do list that gamifies tasks and gives me XP for finishing them.",
+    "A study planner that helps me track my homework and tests."
+];
+
+// When the user clicks the pink button...
+surpriseBtn.addEventListener("click", () => {
+    // 1. Roll a virtual dice to pick a random number
+    const randomIndex = Math.floor(Math.random() * appIdeas.length);
+    
+    // 2. Grab the idea at that random number
+    const randomIdea = appIdeas[randomIndex];
+    
+    // 3. Type it into the big text box
+    ideaBox.value = randomIdea;
+});
+
