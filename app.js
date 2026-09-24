@@ -1,7 +1,7 @@
 console.log("VibeCraft AI is awake! ⚡");
 
 // 1. Grab all the elements we need from the HTML
-const generateBtn = document.querySelector("button"); // The Test Me button
+const generateBtn = document.getElementById("generateBtn"); // The Test Me button
 const outputCard = document.getElementById("outputCard");
 const finalPrompt = document.getElementById("finalPrompt");
 const copyBtn = document.getElementById("copyBtn");
