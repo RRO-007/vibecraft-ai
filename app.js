@@ -52,6 +52,7 @@ appTypeCards.forEach(card => {
 const API_URL = "https://vibecraft-ai.opurbobd2019.workers.dev/"; // <-- PASTE YOUR WORKER URL HERE!
 
 generateBtn.addEventListener("click", async () => {
+    console.log("Button clicked! Trying to reach AI...");
     const idea = document.getElementById("ideaBox").value.trim();
     const toast = document.getElementById("toastMessage");
 
