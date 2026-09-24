@@ -53,6 +53,7 @@
             <div class="model-details">
             <h4 id="modelName">DeepSeek-V3 / R1</h4>
                 <span class="price-tier free">Free Tier</span>
+                <p id="modelRating" class="rating">★★★★☆ (4.5/5 Capability)</p>
                 <p id="modelReason">Best for free power and learning.</p>
             </div>
         </div>
@@ -87,6 +88,13 @@
 
     <button id="generateBtn">✨ Generate Prompt</button>
     
+    <button id="historyBtn" class="history-btn">📜 Show Prompt History</button>
+    
+    <div class="history-card" id="historyCard" style="display: none;">
+        <h3>📜 Your Recent Prompts</h3>
+        <div id="historyList"></div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

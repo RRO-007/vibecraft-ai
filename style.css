@@ -558,3 +558,53 @@ body.dark-mode .surprise-btn {
     box-shadow: 0 0 12px rgba(255, 105, 180, 0.6);
 }
 
+/* 19. Model Rating Stars */
+.rating {
+    font-size: 0.9rem;
+    color: #FFB300; /* Golden yellow for stars */
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+body.dark-mode .rating {
+    text-shadow: 0 0 8px rgba(255, 179, 0, 0.6); /* Neon star glow in dark mode */
+}
+
+/* 20. Prompt History */
+.history-btn {
+    background: #6C757D; /* Muted gray */
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.history-card {
+    width: 100%;
+    max-width: 600px;
+    background: var(--card-bg);
+    border: 2px solid #6C757D;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+.history-card h3 {
+    color: #6C757D;
+    margin-bottom: 15px;
+}
+.history-item {
+    background: #F0F4F8;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    color: #333;
+    cursor: pointer;
+    border-left: 4px solid #8A2BE2; /* Purple accent */
+    transition: transform 0.2s ease;
+}
+.history-item:hover {
+    transform: translateX(5px);
+    background: #E2E8F0;
+}
+body.dark-mode .history-item {
+    background: #21262D;
+    color: #E6EDF3;
+}
+

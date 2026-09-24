@@ -18,12 +18,14 @@ appTypeCards.forEach(card => {
     card.addEventListener("change", () => {
         const timeText = document.getElementById("timeEstimate");
         const hackText = document.getElementById("productivityHack");
+        const ratingText = document.getElementById("modelRating");
 
         if (card.value === "ide") {
             modelName.textContent = "Claude 3.7 Sonnet";
             modelReason.textContent = "Best for high-logic premium coding.";
             priceTier.textContent = "Premium Tier";
             priceTier.style.background = "#E67E22"; // Orange for premium
+            ratingText.textContent = "★★★★★ (5/5 Capability)"; // 5 stars for Claude
             timeText.textContent = "4 - 6 hours";
             hackText.textContent = "Use Cursor's AI chat to explain concepts before writing code.";
         } else if (card.value === "cli") {
@@ -31,6 +33,7 @@ appTypeCards.forEach(card => {
             modelReason.textContent = "Best for fast command-line scripts.";
             priceTier.textContent = "Free Tier";
             priceTier.style.background = "var(--accent)"; // Back to teal
+            ratingText.textContent = "★★★★☆ (4.5/5 Capability)"; // 4.5 stars
             timeText.textContent = "1 - 2 hours";
             hackText.textContent = "Build a tiny version first, then add one feature at a time.";
         } else {
@@ -38,6 +41,7 @@ appTypeCards.forEach(card => {
             modelReason.textContent = "Best for free power and learning.";
             priceTier.textContent = "Free Tier";
             priceTier.style.background = "var(--accent)"; // Back to teal
+            ratingText.textContent = "★★★★☆ (4.5/5 Capability)"; // 4.5 stars
             timeText.textContent = "2 - 4 hours";
             hackText.textContent = "Use the Pomodoro Technique (25 mins work, 5 mins break).";
         }
@@ -86,6 +90,7 @@ generateBtn.addEventListener("click", () => {
 
     finalPrompt.value = prompt;
     outputCard.style.display = "block";
+    saveToHistory(prompt); // <-- Add this line!
 });
 
 // 5. Copy the prompt to clipboard
@@ -227,5 +232,62 @@ downloadBtn.addEventListener("click", () => {
     // 3. Click the link automatically, then clean up
     a.click();
     URL.revokeObjectURL(url);
+});
+
+// 11. Prompt History (The Photo Album)
+const historyBtn = document.getElementById("historyBtn");
+const historyCard = document.getElementById("historyCard");
+const historyList = document.getElementById("historyList");
+
+// Function to save a prompt to the history
+function saveToHistory(promptText) {
+    // 1. Get the existing history from the toy chest
+    let history = JSON.parse(localStorage.getItem("vibeCraftHistory") || "[]");
+    
+    // 2. Add the new prompt to the front of the array
+    history.unshift(promptText);
+    
+    // 3. Keep only the last 5 prompts (so we don't fill up the toy chest)
+    history = history.slice(0, 5);
+    
+    // 4. Save it back
+    localStorage.setItem("vibeCraftHistory", JSON.stringify(history));
+}
+
+// Function to display the history
+function renderHistory() {
+    let history = JSON.parse(localStorage.getItem("vibeCraftHistory") || "[]");
+    historyList.innerHTML = ""; // Clear out old list items
+    
+    if (history.length === 0) {
+        historyList.innerHTML = "<p style='color:#888; font-size:0.9rem;'>No prompts yet! Generate one to start your album.</p>";
+        return;
+    }
+    
+    history.forEach(promptText => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        // Show a preview of the prompt (first 80 characters)
+        div.textContent = promptText.substring(0, 80) + "...";
+        // If they click it, load it back into the main output box
+        div.addEventListener("click", () => {
+            finalPrompt.value = promptText;
+            outputCard.style.display = "block";
+            window.scrollTo({ top: outputCard.offsetTop, behavior: 'smooth' });
+        });
+        historyList.appendChild(div);
+    });
+}
+
+// Show/Hide the history card when the button is clicked
+historyBtn.addEventListener("click", () => {
+    if (historyCard.style.display === "none") {
+        renderHistory();
+        historyCard.style.display = "block";
+        historyBtn.textContent = "📜 Hide History";
+    } else {
+        historyCard.style.display = "none";
+        historyBtn.textContent = "📜 Show Prompt History";
+    }
 });
 
