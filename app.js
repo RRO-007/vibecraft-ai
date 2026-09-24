@@ -16,21 +16,30 @@ const priceTier = document.querySelector(".price-tier");
 // 3. Listen for clicks on any of the app type cards
 appTypeCards.forEach(card => {
     card.addEventListener("change", () => {
+        const timeText = document.getElementById("timeEstimate");
+        const hackText = document.getElementById("productivityHack");
+
         if (card.value === "ide") {
             modelName.textContent = "Claude 3.7 Sonnet";
             modelReason.textContent = "Best for high-logic premium coding.";
             priceTier.textContent = "Premium Tier";
             priceTier.style.background = "#E67E22"; // Orange for premium
+            timeText.textContent = "4 - 6 hours";
+            hackText.textContent = "Use Cursor's AI chat to explain concepts before writing code.";
         } else if (card.value === "cli") {
             modelName.textContent = "DeepSeek-V3 / R1";
             modelReason.textContent = "Best for fast command-line scripts.";
             priceTier.textContent = "Free Tier";
             priceTier.style.background = "var(--accent)"; // Back to teal
+            timeText.textContent = "1 - 2 hours";
+            hackText.textContent = "Build a tiny version first, then add one feature at a time.";
         } else {
             modelName.textContent = "DeepSeek-V3 / R1";
             modelReason.textContent = "Best for free power and learning.";
             priceTier.textContent = "Free Tier";
             priceTier.style.background = "var(--accent)"; // Back to teal
+            timeText.textContent = "2 - 4 hours";
+            hackText.textContent = "Use the Pomodoro Technique (25 mins work, 5 mins break).";
         }
     });
 });
@@ -82,9 +91,11 @@ generateBtn.addEventListener("click", () => {
 // 5. Copy the prompt to clipboard
 copyBtn.addEventListener("click", () => {
     navigator.clipboard.writeText(finalPrompt.value).then(() => {
-        copyBtn.textContent = "✅ Copied!";
+        copyBtn.textContent = "🎉 Copied!";
+        copyBtn.classList.add("pulse"); // Add the gold pulse animation
         setTimeout(() => {
             copyBtn.textContent = "📋 Copy Prompt";
+            copyBtn.classList.remove("pulse"); // Remove it so it can pulse again next time
         }, 2000); // Changes back after 2 seconds
     });
 });
@@ -154,18 +165,13 @@ surpriseBtn.addEventListener("click", () => {
 // 9. Dark Mode Toggle (The Spaceship Button)
 const darkToggle = document.getElementById("darkModeToggle");
 
-// When the page loads, check if the user already picked dark mode
 if (localStorage.getItem("vibeCraftTheme") === "dark") {
     document.body.classList.add("dark-mode");
     darkToggle.textContent = "☀️";
 }
 
-// When the user clicks the moon/sun button...
 darkToggle.addEventListener("click", () => {
-    // 1. Flip the dark-mode class on the body
     document.body.classList.toggle("dark-mode");
-    
-    // 2. Change the emoji and save the choice
     if (document.body.classList.contains("dark-mode")) {
         darkToggle.textContent = "☀️";
         localStorage.setItem("vibeCraftTheme", "dark");

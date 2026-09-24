@@ -483,3 +483,13 @@ body.dark-mode .sync-btn:hover {
     background: #484F58;
 }
 
+/* 15. Copy Button Animation */
+.copy-btn.pulse {
+    animation: pulse 0.4s ease;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); background: #FFD700; } /* Gold flash */
+    100% { transform: scale(1); }
+}
+
