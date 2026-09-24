@@ -48,56 +48,64 @@ appTypeCards.forEach(card => {
     });
 });
 
-// 4. The Core Prompt Generator (Updated with Error Handling)
-generateBtn.addEventListener("click", () => {
-    const idea = document.getElementById("ideaBox").value.trim(); // .trim() removes empty spaces
+// 4. The Core Prompt Generator (NOW WITH REAL AI!)
+const API_URL = "https://vibecraft-ai.opurbobd2019.workers.dev/"; // <-- PASTE YOUR WORKER URL HERE!
+
+generateBtn.addEventListener("click", async () => {
+    const idea = document.getElementById("ideaBox").value.trim();
     const toast = document.getElementById("toastMessage");
 
-    // Get the complexity
-    const complexity = document.getElementById("complexitySlider").value;
-    let complexityText = "Medium";
-    if (complexity === "1") complexityText = "Simple";
-    if (complexity === "3") complexityText = "Large";
-
-    // Edge Case: Empty Idea Box
+    // Validate input
     if (idea === "") {
-        toast.textContent = "Oops! Your idea box is empty. Even one sentence is enough to start.";
-        toast.style.display = "block";
-        setTimeout(() => { toast.style.display = "none"; }, 4000); // Hide after 4 seconds
-        return; // Stop the function here
-    }
-
-    // Edge Case: Too Short
-    if (idea.length < 5) {
-        toast.textContent = "Can you add a tiny bit more detail? Like what it does or who it helps.";
+        toast.textContent = "Oops! Your idea box is empty.";
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 4000);
         return;
     }
 
-    // If it passes the tests, generate the prompt
+    // Show a loading message while we wait for the AI
+    generateBtn.textContent = "🧠 AI is thinking...";
+    generateBtn.disabled = true;
+
+    // Build the context for the AI
     const selectedType = document.querySelector('input[name="appType"]:checked').value;
     const isFiveYearOld = document.getElementById("fiveYearOldToggle").checked;
+    const complexity = document.getElementById("complexitySlider").value;
+    let complexityText = { "1": "Simple", "2": "Medium", "3": "Large" }[complexity];
+    
+    const userContext = `
+        App Type: ${selectedType}
+        Idea: "${idea}"
+        Complexity: ${complexityText}
+        Explain like I'm 5: ${isFiveYearOld ? "YES" : "NO"}
+    `;
 
-    let prompt = `You are an expert coding mentor for a complete beginner.\n`;
-    prompt += `I want to build a ${selectedType} app. Here is my idea:\n"${idea}"\n\n`;
-
-    if (isFiveYearOld) {
-        prompt += `CRITICAL RULE: Explain everything to me like I am 5 years old. Use simple analogies. Do NOT dump massive blocks of code. Act as a pair programmer and guide me step-by-step.\n\n`;
-    } else {
-        prompt += `Please explain the steps clearly and provide code when necessary.\n\n`;
+    // Call your Cloudflare Worker
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userContext })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) throw new Error(data.error);
+        
+        finalPrompt.value = data.result;
+        outputCard.style.display = "block";
+        saveToHistory(data.result);
+        
+    } catch (error) {
+        toast.textContent = "AI connection failed. Check the console for details.";
+        toast.style.display = "block";
+        setTimeout(() => { toast.style.display = "none"; }, 4000);
+        console.error("AI Error:", error);
+    } finally {
+        // Reset the button
+        generateBtn.textContent = "✨ Generate Prompt";
+        generateBtn.disabled = false;
     }
-
-    prompt += `Project Complexity: ${complexityText}. Adjust the detail and scope of your plan accordingly.\n\n`;
-    prompt += `MANDATORY SETUP BLUEPRINT:\n`;
-    prompt += `1. Teach me how to set up VS Code and create the necessary folders.\n`;
-    prompt += `2. Explain the basic terminal commands I need (like ls, cd, mkdir).\n`;
-    prompt += `3. Walk me through initializing Git and GitHub.\n\n`;
-    prompt += `Let's build this together, step by step. Do not hallucinate tools or steps.`;
-
-    finalPrompt.value = prompt;
-    outputCard.style.display = "block";
-    saveToHistory(prompt); // <-- Add this line!
 });
 
 // 5. Copy the prompt to clipboard
@@ -154,54 +162,27 @@ syncBtn.addEventListener("click", () => {
 // Run the load function when the app starts
 loadLastSync();
 
-// 8. The Surprise Me Button Logic (Upgraded with Custom Ideas)
-const surpriseBtn = document.getElementById("surpriseBtn");
-const ideaBox = document.getElementById("ideaBox");
-const customIdeaInput = document.getElementById("customIdeaInput");
-const addIdeaBtn = document.getElementById("addIdeaBtn");
+// 8. The Surprise Me Button (Now uses AI too!)
+surpriseBtn.addEventListener("click", async () => {
+    surpriseBtn.textContent = "🧠 Thinking...";
+    surpriseBtn.disabled = true;
 
-// Start with the default bag of ideas
-let appIdeas = [
-    "A habit tracker that helps me build a daily reading routine.",
-    "A flashcard quiz app for studying for my history exams.",
-    "A simple recipe finder that suggests meals based on what's in my fridge.",
-    "A daily journal that asks me one thoughtful question every morning.",
-    "A budget tracker that visualizes my spending with colorful charts.",
-    "A to-do list that gamifies tasks and gives me XP for finishing them.",
-    "A study planner that helps me track my homework and tests."
-];
-
-// Check the toy chest for any custom ideas the user added before
-const savedIdeas = localStorage.getItem("vibeCraftCustomIdeas");
-if (savedIdeas) {
-    appIdeas = appIdeas.concat(JSON.parse(savedIdeas));
-}
-
-// When the user clicks "Surprise Me"
-surpriseBtn.addEventListener("click", () => {
-    const randomIndex = Math.floor(Math.random() * appIdeas.length);
-    ideaBox.value = appIdeas[randomIndex];
-});
-
-// When the user clicks "Add Idea"
-addIdeaBtn.addEventListener("click", () => {
-    const newIdea = customIdeaInput.value.trim();
-    if (newIdea === "") return; // Ignore empty input
-
-    // 1. Add it to the current grab bag
-    appIdeas.push(newIdea);
-
-    // 2. Save the custom ideas to the toy chest
-    let customIdeas = JSON.parse(localStorage.getItem("vibeCraftCustomIdeas") || "[]");
-    customIdeas.push(newIdea);
-    localStorage.setItem("vibeCraftCustomIdeas", JSON.stringify(customIdeas));
-
-    // 3. Clear the input box
-    customIdeaInput.value = "";
-    
-    // 4. Give a little visual feedback
-    addIdeaBtn.textContent = "✅ Added!";
-    setTimeout(() => { addIdeaBtn.textContent = "➕ Add"; }, 1500);
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: "Generate a single, short, and creative app idea. Just the idea, nothing else." })
+        });
+        const data = await response.json();
+        if (data.result) {
+            ideaBox.value = data.result.trim();
+        }
+    } catch (error) {
+        console.error("Surprise error:", error);
+    } finally {
+        surpriseBtn.textContent = "✨ Surprise Me!";
+        surpriseBtn.disabled = false;
+    }
 });
 
 // 9. Dark Mode Toggle (The Spaceship Button)
