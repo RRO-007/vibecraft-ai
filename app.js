@@ -53,6 +53,12 @@ generateBtn.addEventListener("click", () => {
     const idea = document.getElementById("ideaBox").value.trim(); // .trim() removes empty spaces
     const toast = document.getElementById("toastMessage");
 
+    // Get the complexity
+    const complexity = document.getElementById("complexitySlider").value;
+    let complexityText = "Medium";
+    if (complexity === "1") complexityText = "Simple";
+    if (complexity === "3") complexityText = "Large";
+
     // Edge Case: Empty Idea Box
     if (idea === "") {
         toast.textContent = "Oops! Your idea box is empty. Even one sentence is enough to start.";
@@ -82,6 +88,7 @@ generateBtn.addEventListener("click", () => {
         prompt += `Please explain the steps clearly and provide code when necessary.\n\n`;
     }
 
+    prompt += `Project Complexity: ${complexityText}. Adjust the detail and scope of your plan accordingly.\n\n`;
     prompt += `MANDATORY SETUP BLUEPRINT:\n`;
     prompt += `1. Teach me how to set up VS Code and create the necessary folders.\n`;
     prompt += `2. Explain the basic terminal commands I need (like ls, cd, mkdir).\n`;
@@ -289,5 +296,27 @@ historyBtn.addEventListener("click", () => {
         historyCard.style.display = "none";
         historyBtn.textContent = "📜 Show Prompt History";
     }
+});
+
+// 12. Welcome Modal Logic
+const welcomeModal = document.getElementById("welcomeModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
+
+// Check if the user has seen the welcome message before
+if (localStorage.getItem("vibeCraftWelcomed") === "yes") {
+    welcomeModal.style.display = "none"; // Hide it if they have
+}
+
+closeModalBtn.addEventListener("click", () => {
+    welcomeModal.style.display = "none";
+    localStorage.setItem("vibeCraftWelcomed", "yes"); // Remember for next time
+});
+
+// 13. Complexity Slider Label
+const complexitySlider = document.getElementById("complexitySlider");
+const complexityLabel = document.getElementById("complexityLabel");
+complexitySlider.addEventListener("input", () => {
+    const labels = { "1": "Simple", "2": "Medium", "3": "Large" };
+    complexityLabel.textContent = labels[complexitySlider.value];
 });
 

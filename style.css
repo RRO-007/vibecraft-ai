@@ -15,7 +15,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
@@ -606,5 +606,64 @@ body.dark-mode .rating {
 body.dark-mode .history-item {
     background: #21262D;
     color: #E6EDF3;
+}
+
+/* 21. Welcome Modal & Footer */
+.modal {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 30px;
+    border-radius: 16px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.modal-content h2 { margin-bottom: 15px; color: #8A2BE2; }
+.modal-content p { margin-bottom: 10px; font-size: 0.95rem; }
+.modal-btn {
+    background: var(--primary);
+    margin-top: 15px;
+    width: 100%;
+}
+.footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+    width: 100%;
+    max-width: 600px;
+    border-top: 1px solid #E0E0E0;
+}
+body.dark-mode .footer { border-color: #30363D; }
+
+/* 22. Button Press Animation */
+button:active {
+    transform: scale(0.96) translateY(0); /* Shrinks slightly when pressed */
+}
+
+/* 23. Complexity Slider */
+.complexity-section {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.complexity-section label {
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: bold;
+}
+body.dark-mode .complexity-section label { color: #8B949E; }
+input[type="range"] {
+    width: 100%;
+    accent-color: #8A2BE2; /* Makes the slider purple */
 }
 

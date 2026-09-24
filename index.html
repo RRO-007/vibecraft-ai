@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>VibeCraft AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,7 +28,7 @@
         </label>
     </div>
 
-        <div class="idea-section">
+    <div class="idea-section">
         <label for="ideaBox">Describe your dream app:</label>
         <textarea id="ideaBox" placeholder="Describe your dream app here... (e.g., A study planner that helps me track homework)"></textarea>
         <button id="surpriseBtn" class="surprise-btn">✨ Surprise Me!</button>
@@ -35,6 +36,11 @@
         <div class="custom-idea-box">
             <input type="text" id="customIdeaInput" placeholder="Add your own idea to the grab bag...">
             <button id="addIdeaBtn" class="add-idea-btn">➕ Add</button>
+        </div>
+
+        <div class="complexity-section">
+            <label for="complexitySlider">Project Complexity: <span id="complexityLabel">Medium</span></label>
+            <input type="range" id="complexitySlider" min="1" max="3" value="2" step="1">
         </div>
     </div>
     
@@ -95,6 +101,22 @@
         <div id="historyList"></div>
     </div>
 
+    <!-- Welcome Popup -->
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <h2>👋 Welcome to VibeCraft AI!</h2>
+            <p>Turn your app idea into a bulletproof prompt for DeepSeek, Claude, or ChatGPT.</p>
+            <p><strong>3 steps:</strong></p>
+            <p>1. Pick an app type.<br>2. Describe your idea.<br>3. Click "Generate Prompt" and copy it!</p>
+            <button id="closeModalBtn" class="modal-btn">Got it! Let's go 🚀</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Built with 💜 by <strong>RRO-007</strong> | VibeCraft AI © 2026</p>
+    </footer>
+
     <script src="app.js"></script>
+
 </body>
 </html>
