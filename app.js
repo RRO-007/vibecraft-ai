@@ -160,14 +160,14 @@ syncBtn.addEventListener("click", () => {
 // Run the load function when the app starts
 loadLastSync();
 
-// 8. Surprise Me — now uses a clean mode flag
+// 8. Surprise Me Button
 surpriseBtn.addEventListener("click", async () => {
     surpriseBtn.textContent = "🧠 Thinking...";
     surpriseBtn.disabled = true;
     ideaBox.value = "";
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
         const response = await fetch(API_URL, {
