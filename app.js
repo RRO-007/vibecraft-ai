@@ -150,3 +150,28 @@ surpriseBtn.addEventListener("click", () => {
     const randomIdea = appIdeas[randomIndex];
     ideaBox.value = randomIdea;
 });
+
+// 9. Dark Mode Toggle (The Spaceship Button)
+const darkToggle = document.getElementById("darkModeToggle");
+
+// When the page loads, check if the user already picked dark mode
+if (localStorage.getItem("vibeCraftTheme") === "dark") {
+    document.body.classList.add("dark-mode");
+    darkToggle.textContent = "☀️";
+}
+
+// When the user clicks the moon/sun button...
+darkToggle.addEventListener("click", () => {
+    // 1. Flip the dark-mode class on the body
+    document.body.classList.toggle("dark-mode");
+    
+    // 2. Change the emoji and save the choice
+    if (document.body.classList.contains("dark-mode")) {
+        darkToggle.textContent = "☀️";
+        localStorage.setItem("vibeCraftTheme", "dark");
+    } else {
+        darkToggle.textContent = "🌙";
+        localStorage.setItem("vibeCraftTheme", "light");
+    }
+});
+
