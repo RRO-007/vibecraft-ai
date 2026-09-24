@@ -48,15 +48,14 @@ appTypeCards.forEach(card => {
     });
 });
 
-// 4. The Core Prompt Generator (NOW WITH REAL AI!)
-const API_URL = "https://vibecraft-ai.opurbobd2019.workers.dev/"; // <-- PASTE YOUR WORKER URL HERE!
+// 4. The Core Prompt Generator (With Timeout Safety Net)
+const API_URL = "https://vibecraft-ai.opurbobd2019.workers.dev/";
 
 generateBtn.addEventListener("click", async () => {
     console.log("Button clicked! Trying to reach AI...");
     const idea = document.getElementById("ideaBox").value.trim();
     const toast = document.getElementById("toastMessage");
 
-    // Validate input
     if (idea === "") {
         toast.textContent = "Oops! Your idea box is empty.";
         toast.style.display = "block";
@@ -64,11 +63,13 @@ generateBtn.addEventListener("click", async () => {
         return;
     }
 
-    // Show a loading message while we wait for the AI
     generateBtn.textContent = "🧠 AI is thinking...";
     generateBtn.disabled = true;
 
-    // Build the context for the AI
+    // --- SAFETY NET: Abort if it takes longer than 15 seconds ---
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     const selectedType = document.querySelector('input[name="appType"]:checked').value;
     const isFiveYearOld = document.getElementById("fiveYearOldToggle").checked;
     const complexity = document.getElementById("complexitySlider").value;
@@ -81,16 +82,15 @@ generateBtn.addEventListener("click", async () => {
         Explain like I'm 5: ${isFiveYearOld ? "YES" : "NO"}
     `;
 
-    // Call your Cloudflare Worker
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: userContext })
+            body: JSON.stringify({ prompt: userContext }),
+            signal: controller.signal // <-- Attach the safety net
         });
         
         const data = await response.json();
-        
         if (data.error) throw new Error(data.error);
         
         finalPrompt.value = data.result;
@@ -98,12 +98,17 @@ generateBtn.addEventListener("click", async () => {
         saveToHistory(data.result);
         
     } catch (error) {
-        toast.textContent = "AI connection failed. Check the console for details.";
+        if (error.name === "AbortError") {
+            toast.textContent = "The AI took too long to respond. Please try again.";
+        } else {
+            toast.textContent = "AI connection failed. Please try again.";
+        }
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 4000);
         console.error("AI Error:", error);
     } finally {
-        // Reset the button
+        // Always reset the button, no matter what happens!
+        clearTimeout(timeoutId);
         generateBtn.textContent = "✨ Generate Prompt";
         generateBtn.disabled = false;
     }
@@ -163,16 +168,19 @@ syncBtn.addEventListener("click", () => {
 // Run the load function when the app starts
 loadLastSync();
 
-// 8. The Surprise Me Button (Now uses AI too!)
+// 8. The Surprise Me Button (Fixed: Generates short ideas)
 surpriseBtn.addEventListener("click", async () => {
     surpriseBtn.textContent = "🧠 Thinking...";
     surpriseBtn.disabled = true;
+    ideaBox.value = ""; // Clear the box first!
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: "Generate a single, short, and creative app idea. Just the idea, nothing else." })
+            body: JSON.stringify({ 
+                prompt: "Output ONE short, creative app idea. Just one sentence. Do not write a prompt. Do not explain." 
+            })
         });
         const data = await response.json();
         if (data.result) {
