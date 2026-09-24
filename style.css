@@ -1,0 +1,413 @@
+/* 1. Our Color Palette */
+:root {
+    --primary: linear-gradient(135deg, #8A2BE2, #4169E1); /* Purple to Blue */
+    --accent: linear-gradient(135deg, #00FF7F, #20B2AA); /* Green to Teal */
+    --bg-color: #F8F9FA; /* Calm library off-white */
+    --text-color: #333333;
+    --card-bg: #FFFFFF;
+}
+
+/* 2. Global Reset & Body Setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Takes up full screen height */
+    padding: 20px;
+}
+
+/* 3. Typography */
+h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #8A2BE2; /* Fallback color */
+    text-align: center;
+}
+
+/* 4. Buttons */
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px; /* Smooth rounded corners */
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Button Hover Effect */
+button:hover {
+    transform: translateY(-2px); /* Moves up slightly */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Adds a nice shadow */
+}
+
+/* 5. App Type Selector Cards */
+.app-type-selector {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.type-card {
+    background: var(--card-bg);
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    padding: 20px 25px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+    font-weight: bold;
+    color: #555;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Hide the ugly default round radio circle */
+.type-card input {
+    display: none; 
+}
+
+/* The Magic: If the card has a checked radio, change its color */
+.type-card:has(input:checked) {
+    border-color: #8A2BE2; /* Our primary purple */
+    background: #F3E8FF;   /* Soft light purple background */
+    color: #8A2BE2;
+    box-shadow: 0 4px 12px rgba(138, 43, 226, 0.2);
+}
+
+/* Hover effect */
+.type-card:hover {
+    border-color: #8A2BE2;
+    transform: translateY(-2px);
+}
+
+/* 6. Idea Textarea */
+.idea-section {
+    width: 100%;
+    max-width: 600px; /* Keeps it from getting too wide on big screens */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.idea-section label {
+    font-weight: bold;
+    color: #555;
+    text-align: left;
+}
+
+textarea {
+    width: 100%;
+    min-height: 150px; /* Makes it nice and tall */
+    padding: 15px; /* Bubble wrap inside the box */
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical; /* User can only stretch it up and down, not sideways */
+    transition: border-color 0.2s ease;
+    background: var(--card-bg);
+}
+
+/* When the user clicks inside the box */
+textarea:focus {
+    outline: none;
+    border-color: #8A2BE2; /* Purple border */
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1); /* Soft purple glow */
+}
+
+/* The ghost text color */
+textarea::placeholder {
+    color: #A0A0A0;
+}
+
+/* 7. The iOS Toggle Switch */
+.toggle-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    background: var(--card-bg);
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    flex-shrink: 0; /* Prevents it from squishing on small screens */
+}
+
+/* Hide the default checkbox */
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The track (the background pill) */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+/* The knob (the circle that slides) */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* When the checkbox is checked */
+input:checked + .slider {
+    background: var(--primary);
+}
+
+/* Move the knob when checked */
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.toggle-label {
+    font-weight: bold;
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* 8. AI Model Suggester Card */
+.model-suggester-card {
+    width: 100%;
+    max-width: 600px;
+    background: var(--card-bg);
+    border: 2px solid #20B2AA; /* Teal border to match our accent */
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.model-suggester-card h3 {
+    color: #20B2AA;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.model-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.model-icon {
+    font-size: 2.5rem;
+    background: #E0FFFF; /* Soft light teal background */
+    padding: 10px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.model-details h4 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.price-tier {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.price-tier.free {
+    background: var(--accent);
+    color: white;
+}
+
+.model-details p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* 9. Daily Internet Sync Card */
+.sync-card {
+    width: 100%;
+    max-width: 600px;
+    background: #F0F4F8; /* Soft calm blue-gray */
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #D0D7DE;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.sync-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sync-header h3 {
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.sync-btn {
+    background: #555; /* Neutral dark gray */
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+.sync-btn:hover {
+    background: #333;
+}
+
+.sync-status, .sync-data {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+#syncStatus {
+    font-weight: bold;
+    color: #20B2AA; /* Teal for "Online" */
+}
+
+/* 10. Time & Efficiency Predictor Card */
+.predictor-card {
+    width: 100%;
+    max-width: 600px;
+    background: #FFF8F0; /* Soft warm peach */
+    border: 1px solid #FFE0B2;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.predictor-card h3 {
+    color: #E67E22; /* Warm orange */
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+}
+
+.predictor-details p {
+    font-size: 0.95rem;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.predictor-details strong {
+    color: #333;
+}
+
+/* 11. Surprise Me Button */
+.surprise-btn {
+    background: #FF69B4; /* Playful pink */
+    margin-top: 10px;
+    align-self: flex-start; /* Aligns it to the left, under the textarea */
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.surprise-btn:hover {
+    background: #FF1493; /* Darker pink on hover */
+}
+
+/* 12. Output Card */
+.output-card {
+    width: 100%;
+    max-width: 600px;
+    background: #FFFFFF;
+    border: 2px solid #8A2BE2;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+.output-card h3 {
+    color: #8A2BE2;
+    margin-bottom: 15px;
+}
+#finalPrompt {
+    min-height: 200px;
+    background: #F8F9FA;
+    font-family: monospace; /* Looks like code */
+    font-size: 0.9rem;
+    color: #333;
+}
+.output-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+.copy-btn {
+    background: var(--accent); /* Green-to-Teal */
+    flex: 1;
+}
+.regen-btn {
+    background: #555;
+    flex: 1;
+}
+
+/* 13. Toast Notification */
+.toast {
+    display: none; /* Hidden by default */
+    background: #FF6B6B; /* Soft red */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+

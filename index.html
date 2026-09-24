@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VibeCraft AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>VibeCraft AI</h1>
+    
+    <div id="toastMessage" class="toast"></div> 
+    
+    <div class="app-type-selector">
+        <label class="type-card">
+            <input type="radio" name="appType" value="web" checked>
+            <span>🌐 Web AI App</span>
+        </label>
+        <label class="type-card">
+            <input type="radio" name="appType" value="ide">
+            <span>💻 IDE/Cursor App</span>
+        </label>
+        <label class="type-card">
+            <input type="radio" name="appType" value="cli">
+            <span>⌨️ Command Line Tool</span>
+        </label>
+    </div>
+
+    <div class="idea-section">
+        <label for="ideaBox">Describe your dream app:</label>
+        <textarea id="ideaBox" placeholder="Describe your dream app here... (e.g., A study planner that helps me track homework)"></textarea>
+        <button id="surpriseBtn" class="surprise-btn">✨ Surprise Me!</button>
+    </div>
+    
+    <div class="model-suggester-card">
+        <h3>🤖 Recommended AI Engine</h3>
+        <div class="model-info">
+            <div class="model-icon">🧠</div>
+            <div class="model-details">
+            <h4 id="modelName">DeepSeek-V3 / R1</h4>
+                <span class="price-tier free">Free Tier</span>
+                <p id="modelReason">Best for free power and learning.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="sync-card">
+        <div class="sync-header">
+            <h3>📡 Daily Internet Sync</h3>
+            <button id="syncButton" class="sync-btn">Sync Now</button>
+        </div>
+        <p class="sync-status">Last Updated: <span id="lastUpdated">Just Now</span></p>
+        <p class="sync-data">Status: <span id="syncStatus">Online</span></p>
+    </div>
+
+    <div class="predictor-card">
+        <h3>⏱ Time & Efficiency Predictor</h3>
+        <div class="predictor-details">
+            <p><strong>Estimated Time:</strong> <span id="timeEstimate">2 - 4 hours</span></p>
+            <p><strong>Productivity Hack:</strong> <span id="productivityHack">Use the Pomodoro Technique (25 mins work, 5 mins break).</span></p>
+        </div>
+    </div>
+
+    <div class="output-card" id="outputCard" style="display: none;">
+        <h3>✨ Your Master Prompt</h3>
+        <textarea id="finalPrompt" readonly placeholder="Your generated prompt will appear here..."></textarea>
+        <div class="output-actions">
+            <button id="copyBtn" class="copy-btn">📋 Copy Prompt</button>
+            <button id="regenerateBtn" class="regen-btn">🔄 Regenerate</button>
+        </div>
+    </div>
+
+    <button id="generateBtn">✨ Generate Prompt</button>
+    
+    <script src="app.js"></script>
+</body>
+</html>
