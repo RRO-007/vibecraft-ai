@@ -142,11 +142,14 @@ syncBtn.addEventListener("click", () => {
 // Run the load function when the app starts
 loadLastSync();
 
-// 8. The Surprise Me Button Logic
+// 8. The Surprise Me Button Logic (Upgraded with Custom Ideas)
 const surpriseBtn = document.getElementById("surpriseBtn");
 const ideaBox = document.getElementById("ideaBox");
+const customIdeaInput = document.getElementById("customIdeaInput");
+const addIdeaBtn = document.getElementById("addIdeaBtn");
 
-const appIdeas = [
+// Start with the default bag of ideas
+let appIdeas = [
     "A habit tracker that helps me build a daily reading routine.",
     "A flashcard quiz app for studying for my history exams.",
     "A simple recipe finder that suggests meals based on what's in my fridge.",
@@ -156,10 +159,37 @@ const appIdeas = [
     "A study planner that helps me track my homework and tests."
 ];
 
+// Check the toy chest for any custom ideas the user added before
+const savedIdeas = localStorage.getItem("vibeCraftCustomIdeas");
+if (savedIdeas) {
+    appIdeas = appIdeas.concat(JSON.parse(savedIdeas));
+}
+
+// When the user clicks "Surprise Me"
 surpriseBtn.addEventListener("click", () => {
     const randomIndex = Math.floor(Math.random() * appIdeas.length);
-    const randomIdea = appIdeas[randomIndex];
-    ideaBox.value = randomIdea;
+    ideaBox.value = appIdeas[randomIndex];
+});
+
+// When the user clicks "Add Idea"
+addIdeaBtn.addEventListener("click", () => {
+    const newIdea = customIdeaInput.value.trim();
+    if (newIdea === "") return; // Ignore empty input
+
+    // 1. Add it to the current grab bag
+    appIdeas.push(newIdea);
+
+    // 2. Save the custom ideas to the toy chest
+    let customIdeas = JSON.parse(localStorage.getItem("vibeCraftCustomIdeas") || "[]");
+    customIdeas.push(newIdea);
+    localStorage.setItem("vibeCraftCustomIdeas", JSON.stringify(customIdeas));
+
+    // 3. Clear the input box
+    customIdeaInput.value = "";
+    
+    // 4. Give a little visual feedback
+    addIdeaBtn.textContent = "✅ Added!";
+    setTimeout(() => { addIdeaBtn.textContent = "➕ Add"; }, 1500);
 });
 
 // 9. Dark Mode Toggle (The Spaceship Button)
@@ -179,5 +209,23 @@ darkToggle.addEventListener("click", () => {
         darkToggle.textContent = "🌙";
         localStorage.setItem("vibeCraftTheme", "light");
     }
+});
+
+// 10. Download Button Logic
+const downloadBtn = document.getElementById("downloadBtn");
+
+downloadBtn.addEventListener("click", () => {
+    // 1. Create a "Blob" (a virtual file) from the prompt text
+    const blob = new Blob([finalPrompt.value], { type: "text/plain" });
+    
+    // 2. Create a temporary invisible link to the file
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "VibeCraft-Prompt.txt"; // The name of the downloaded file
+    
+    // 3. Click the link automatically, then clean up
+    a.click();
+    URL.revokeObjectURL(url);
 });
 

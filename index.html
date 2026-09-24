@@ -27,10 +27,15 @@
         </label>
     </div>
 
-    <div class="idea-section">
+        <div class="idea-section">
         <label for="ideaBox">Describe your dream app:</label>
         <textarea id="ideaBox" placeholder="Describe your dream app here... (e.g., A study planner that helps me track homework)"></textarea>
         <button id="surpriseBtn" class="surprise-btn">✨ Surprise Me!</button>
+        
+        <div class="custom-idea-box">
+            <input type="text" id="customIdeaInput" placeholder="Add your own idea to the grab bag...">
+            <button id="addIdeaBtn" class="add-idea-btn">➕ Add</button>
+        </div>
     </div>
     
     <div class="toggle-section">
@@ -75,6 +80,7 @@
         <textarea id="finalPrompt" readonly placeholder="Your generated prompt will appear here..."></textarea>
         <div class="output-actions">
             <button id="copyBtn" class="copy-btn">📋 Copy Prompt</button>
+            <button id="downloadBtn" class="download-btn">📥 Download</button>
             <button id="regenerateBtn" class="regen-btn">🔄 Regenerate</button>
         </div>
     </div>

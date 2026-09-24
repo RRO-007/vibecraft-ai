@@ -493,3 +493,68 @@ body.dark-mode .sync-btn:hover {
     100% { transform: scale(1); }
 }
 
+/* 16. Download Button */
+.download-btn {
+    background: #4169E1; /* Royal Blue */
+    flex: 1;
+}
+.download-btn:hover {
+    background: #3154B3;
+}
+
+/* 17. Custom Idea Grab Bag */
+.custom-idea-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.custom-idea-box input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+.custom-idea-box input:focus {
+    outline: none;
+    border-color: #FF69B4;
+}
+.add-idea-btn {
+    background: #FF69B4;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}
+
+/* 18. Neon Glow Polish (Dark Mode Only) */
+body.dark-mode h1 {
+    text-shadow: 0 0 10px rgba(138, 43, 226, 0.8), 0 0 20px rgba(138, 43, 226, 0.5);
+}
+
+body.dark-mode .model-suggester-card {
+    box-shadow: 0 0 15px rgba(32, 178, 170, 0.2);
+}
+
+body.dark-mode .output-card {
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+    border-color: #B794F6;
+}
+
+body.dark-mode .type-card:has(input:checked) {
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+}
+
+body.dark-mode button:not(.dark-toggle):not(.sync-btn):not(.regen-btn) {
+    box-shadow: 0 0 12px rgba(138, 43, 226, 0.5);
+}
+
+body.dark-mode .copy-btn {
+    box-shadow: 0 0 12px rgba(32, 178, 170, 0.6);
+}
+
+body.dark-mode .surprise-btn {
+    box-shadow: 0 0 12px rgba(255, 105, 180, 0.6);
+}
+
