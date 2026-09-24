@@ -48,11 +48,10 @@ appTypeCards.forEach(card => {
     });
 });
 
-// 4. The Core Prompt Generator (With Timeout Safety Net)
+// 4. The Core Prompt Generator (45s timeout + mode flag)
 const API_URL = "https://vibecraft-ai.opurbobd2019.workers.dev/";
 
 generateBtn.addEventListener("click", async () => {
-    console.log("Button clicked! Trying to reach AI...");
     const idea = document.getElementById("ideaBox").value.trim();
     const toast = document.getElementById("toastMessage");
 
@@ -66,28 +65,23 @@ generateBtn.addEventListener("click", async () => {
     generateBtn.textContent = "🧠 AI is thinking...";
     generateBtn.disabled = true;
 
-    // --- SAFETY NET: Abort if it takes longer than 15 seconds ---
+    // SAFETY NET: 45 seconds (Gemini can take 20+ seconds)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
 
     const selectedType = document.querySelector('input[name="appType"]:checked').value;
     const isFiveYearOld = document.getElementById("fiveYearOldToggle").checked;
     const complexity = document.getElementById("complexitySlider").value;
-    let complexityText = { "1": "Simple", "2": "Medium", "3": "Large" }[complexity];
+    const complexityText = { "1": "Simple", "2": "Medium", "3": "Large" }[complexity];
     
-    const userContext = `
-        App Type: ${selectedType}
-        Idea: "${idea}"
-        Complexity: ${complexityText}
-        Explain like I'm 5: ${isFiveYearOld ? "YES" : "NO"}
-    `;
+    const userContext = `App Type: ${selectedType} | Idea: "${idea}" | Complexity: ${complexityText} | Explain like I'm 5: ${isFiveYearOld ? "YES" : "NO"}`;
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: userContext }),
-            signal: controller.signal // <-- Attach the safety net
+            body: JSON.stringify({ prompt: userContext, mode: "prompt" }),
+            signal: controller.signal
         });
         
         const data = await response.json();
@@ -98,16 +92,14 @@ generateBtn.addEventListener("click", async () => {
         saveToHistory(data.result);
         
     } catch (error) {
-        if (error.name === "AbortError") {
-            toast.textContent = "The AI took too long to respond. Please try again.";
-        } else {
-            toast.textContent = "AI connection failed. Please try again.";
-        }
+        const message = error.name === "AbortError" 
+            ? "The AI took over 45 seconds. Please try again." 
+            : "AI connection failed. Please try again.";
+        toast.textContent = message;
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 4000);
         console.error("AI Error:", error);
     } finally {
-        // Always reset the button, no matter what happens!
         clearTimeout(timeoutId);
         generateBtn.textContent = "✨ Generate Prompt";
         generateBtn.disabled = false;
@@ -168,19 +160,21 @@ syncBtn.addEventListener("click", () => {
 // Run the load function when the app starts
 loadLastSync();
 
-// 8. The Surprise Me Button (Fixed: Generates short ideas)
+// 8. Surprise Me — now uses a clean mode flag
 surpriseBtn.addEventListener("click", async () => {
     surpriseBtn.textContent = "🧠 Thinking...";
     surpriseBtn.disabled = true;
-    ideaBox.value = ""; // Clear the box first!
+    ideaBox.value = "";
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                prompt: "Output ONE short, creative app idea. Just one sentence. Do not write a prompt. Do not explain." 
-            })
+            body: JSON.stringify({ prompt: "give me one app idea", mode: "idea" }),
+            signal: controller.signal
         });
         const data = await response.json();
         if (data.result) {
@@ -189,6 +183,7 @@ surpriseBtn.addEventListener("click", async () => {
     } catch (error) {
         console.error("Surprise error:", error);
     } finally {
+        clearTimeout(timeoutId);
         surpriseBtn.textContent = "✨ Surprise Me!";
         surpriseBtn.disabled = false;
     }
