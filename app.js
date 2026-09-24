@@ -148,6 +148,9 @@ const appIdeas = [
 
 // When the user clicks the pink button...
 surpriseBtn.addEventListener("click", () => {
+
+    console.log("Surprise button was clicked!");
+    
     // 1. Roll a virtual dice to pick a random number
     const randomIndex = Math.floor(Math.random() * appIdeas.length);
     
