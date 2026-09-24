@@ -48,7 +48,7 @@ appTypeCards.forEach(card => {
     });
 });
 
-// 4. The Core Prompt Generator (45s timeout + mode flag)
+// 4. The Core Prompt Generator (Patient Version)
 const API_URL = "https://vibecraft-ai.opurbobd2019.workers.dev/";
 
 generateBtn.addEventListener("click", async () => {
@@ -62,26 +62,20 @@ generateBtn.addEventListener("click", async () => {
         return;
     }
 
-    generateBtn.textContent = "🧠 AI is thinking...";
+    generateBtn.textContent = "🧠 AI is thinking... (may take 60s)";
     generateBtn.disabled = true;
-
-    // SAFETY NET: 45 seconds (Gemini can take 20+ seconds)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 45000);
 
     const selectedType = document.querySelector('input[name="appType"]:checked').value;
     const isFiveYearOld = document.getElementById("fiveYearOldToggle").checked;
     const complexity = document.getElementById("complexitySlider").value;
     const complexityText = { "1": "Simple", "2": "Medium", "3": "Large" }[complexity];
-    
     const userContext = `App Type: ${selectedType} | Idea: "${idea}" | Complexity: ${complexityText} | Explain like I'm 5: ${isFiveYearOld ? "YES" : "NO"}`;
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: userContext, mode: "prompt" }),
-            signal: controller.signal
+            body: JSON.stringify({ prompt: userContext, mode: "prompt" })
         });
         
         const data = await response.json();
@@ -92,15 +86,11 @@ generateBtn.addEventListener("click", async () => {
         saveToHistory(data.result);
         
     } catch (error) {
-        const message = error.name === "AbortError" 
-            ? "The AI took over 45 seconds. Please try again." 
-            : "AI connection failed. Please try again.";
-        toast.textContent = message;
+        toast.textContent = "AI connection failed. Try again in a moment.";
         toast.style.display = "block";
         setTimeout(() => { toast.style.display = "none"; }, 4000);
         console.error("AI Error:", error);
     } finally {
-        clearTimeout(timeoutId);
         generateBtn.textContent = "✨ Generate Prompt";
         generateBtn.disabled = false;
     }
@@ -160,30 +150,36 @@ syncBtn.addEventListener("click", () => {
 // Run the load function when the app starts
 loadLastSync();
 
-// 8. Surprise Me Button
+// 8. Surprise Me Button (Patient Version)
 surpriseBtn.addEventListener("click", async () => {
     surpriseBtn.textContent = "🧠 Thinking...";
     surpriseBtn.disabled = true;
     ideaBox.value = "";
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    // Show a hint that this can take a while
+    const toast = document.getElementById("toastMessage");
+    toast.textContent = "⏳ Asking the AI... this can take 30-60 seconds on free tier.";
+    toast.style.display = "block";
+    toast.style.background = "#FFB300"; // amber
 
     try {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: "give me one app idea", mode: "idea" }),
-            signal: controller.signal
+            body: JSON.stringify({ prompt: "give me one app idea", mode: "idea" })
         });
         const data = await response.json();
         if (data.result) {
             ideaBox.value = data.result.trim();
+            toast.textContent = "✅ Idea ready!";
+            toast.style.background = "#20B2AA";
         }
     } catch (error) {
         console.error("Surprise error:", error);
+        toast.textContent = "❌ AI failed. Try again in a moment.";
+        toast.style.background = "#FF6B6B";
     } finally {
-        clearTimeout(timeoutId);
+        setTimeout(() => { toast.style.display = "none"; toast.style.background = ""; }, 3000);
         surpriseBtn.textContent = "✨ Surprise Me!";
         surpriseBtn.disabled = false;
     }
