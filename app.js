@@ -312,11 +312,17 @@ closeModalBtn.addEventListener("click", () => {
     localStorage.setItem("vibeCraftWelcomed", "yes"); // Remember for next time
 });
 
-// 13. Complexity Slider Label
+// 13. Complexity Slider Label (Updated with Debugging)
 const complexitySlider = document.getElementById("complexitySlider");
 const complexityLabel = document.getElementById("complexityLabel");
-complexitySlider.addEventListener("input", () => {
+
+// We listen for BOTH 'input' (while dragging) and 'change' (when released) to be safe
+complexitySlider.addEventListener("input", updateComplexityLabel);
+complexitySlider.addEventListener("change", updateComplexityLabel);
+
+function updateComplexityLabel() {
     const labels = { "1": "Simple", "2": "Medium", "3": "Large" };
     complexityLabel.textContent = labels[complexitySlider.value];
-});
+    console.log("Slider moved! New value:", complexitySlider.value, "-> Label:", labels[complexitySlider.value]);
+}
 
